@@ -15,7 +15,7 @@ type FormData = {
   description: LocalizedField;
 };
 
-type FinalFormData = FormData & { productId: string | null };
+type FinalFormData = FormData & { productId: LocalizedField };
 
 const ContentfulForm: React.FC = () => {
   const { productId } = useProduct();
@@ -23,7 +23,7 @@ const ContentfulForm: React.FC = () => {
   const [form, setForm] = useState<FinalFormData>({
     title: { "en-US": "", "fr-CA": "" },
     description: { "en-US": "", "fr-CA": "" },
-    productId: productId,
+    productId: { "en-US": productId as string, "fr-CA": productId as string },
   });
 
   const handleChange = (
@@ -45,7 +45,7 @@ const ContentfulForm: React.FC = () => {
     e.preventDefault();
     console.log(form);
 
-    // blogPost - this is the id of the component I am allowing edit access to
+    // item - this is the id of the component I am allowing edit access to
     uploadEntryToContentful(form, "item")();
 
     // here, submit the call to contentful
@@ -53,7 +53,7 @@ const ContentfulForm: React.FC = () => {
     setForm({
       title: { "en-US": "", "fr-CA": "" },
       description: { "en-US": "", "fr-CA": "" },
-      productId: productId || "",
+      productId: { "en-US": productId as string, "fr-CA": productId as string },
     });
   };
 

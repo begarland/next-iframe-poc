@@ -18,8 +18,9 @@ export async function POST(req: NextRequest) {
   const requestOptions: any = {
     method: "POST",
     headers: myHeaders,
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ fields: payload.fields }),
     redirect: "follow",
+    cache: "no-store",
   };
 
   return fetch(
