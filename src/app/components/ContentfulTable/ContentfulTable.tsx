@@ -109,7 +109,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {rows
-                    .filter((row) => row.productId === productId)
+                    .filter((row) => row.productId === `${productId}`)
                     .map((row) => (
                       <tr
                         key={row.id}

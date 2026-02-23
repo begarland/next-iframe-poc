@@ -4,6 +4,8 @@ import { useProduct } from "../contexts/ProductContext";
 export const useWindowListener = () => {
   const { setProductId } = useProduct();
 
+  console.log(';here')
+
   useEffect(() => {
     window.addEventListener("message", (event) => {
       console.log("message", JSON.stringify(event));
