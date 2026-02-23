@@ -7,6 +7,7 @@ type Entry = {
   fields: {
     title: string;
     description: string;
+    productId: string;
   };
 };
 

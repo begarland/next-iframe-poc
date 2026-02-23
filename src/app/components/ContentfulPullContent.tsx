@@ -23,7 +23,7 @@ async function getData() {
 
   await publishedClient
     .getEntries({
-      content_type: "title",
+      content_type: "item",
       // locale: locale,
     })
     .then(function (entries) {
@@ -32,7 +32,7 @@ async function getData() {
 
   await previewClient
     .getEntries({
-      content_type: "title",
+      content_type: "item",
       // locale: locale,
     })
     .then(function (entries) {

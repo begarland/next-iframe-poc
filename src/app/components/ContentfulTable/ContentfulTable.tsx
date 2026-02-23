@@ -3,8 +3,11 @@
 import React, { useMemo, useState } from "react";
 import Markdown from "react-markdown";
 import { ContentfulDataProps } from "./types";
+import { useProduct } from "@/app/contexts/ProductContext";
 
 const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
+  const { productId } = useProduct();
+
   const { publishedData, previewData } = data;
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -17,6 +20,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
       id: item.sys.id,
       title: item.fields.title,
       description: item.fields.description,
+      productId: item.fields.productId,
       status: publishedIds.has(item.sys.id) ? "Published" : "Draft",
       createdAt: item.sys.createdAt,
       updatedAt: item.sys.updatedAt,
@@ -104,32 +108,34 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      onClick={() => setSelectedId(row.id)}
-                      className="cursor-pointer hover:bg-gray-50 transition"
-                    >
-                      <td className="px-6 py-5 font-medium text-gray-900">
-                        {row.title}
-                      </td>
-                      <td className="px-6 py-5">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${statusBadge(
-                            row.status,
-                          )}`}
-                        >
-                          {row.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-5 text-gray-500">
-                        {formatDate(row.createdAt)}
-                      </td>
-                      <td className="px-6 py-5 text-gray-500">
-                        {formatDate(row.updatedAt)}
-                      </td>
-                    </tr>
-                  ))}
+                  {rows
+                    .filter((row) => row.productId === productId)
+                    .map((row) => (
+                      <tr
+                        key={row.id}
+                        onClick={() => setSelectedId(row.id)}
+                        className="cursor-pointer hover:bg-gray-50 transition"
+                      >
+                        <td className="px-6 py-5 font-medium text-gray-900">
+                          {row.title}
+                        </td>
+                        <td className="px-6 py-5">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${statusBadge(
+                              row.status,
+                            )}`}
+                          >
+                            {row.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-5 text-gray-500">
+                          {formatDate(row.createdAt)}
+                        </td>
+                        <td className="px-6 py-5 text-gray-500">
+                          {formatDate(row.updatedAt)}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
