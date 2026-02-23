@@ -3,12 +3,13 @@
 import { useProduct } from "../contexts/ProductContext";
 
 export const ProductSelector = () => {
-  const { productId, setProductId } = useProduct();
+  const { productId } = useProduct();
 
   return (
-    <div>
-      <p>Selected product: {productId ?? "none"}</p>
-      <button onClick={() => setProductId("123")}>Select Product 123</button>
+    <div className="flex justify-center items-center">
+      <div className="mt-10">
+        <p className="bold text-2xl">Selected product: {productId ?? "none"}</p>
+      </div>
     </div>
   );
 };
