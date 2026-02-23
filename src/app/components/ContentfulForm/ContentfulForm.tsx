@@ -1,5 +1,6 @@
 "use client";
 
+import { useProduct } from "@/app/contexts/ProductContext";
 import { uploadEntryToContentful } from "@/app/fetches/uploadEntryToContentful";
 import { ChangeEvent, FormEvent, useState } from "react";
 // import UploadToContentfulButton from "../UploadToContentfulButton";
@@ -14,10 +15,15 @@ type FormData = {
   description: LocalizedField;
 };
 
+type FinalFormData = FormData & { productId: string | null };
+
 const ContentfulForm: React.FC = () => {
-  const [form, setForm] = useState<FormData>({
+  const { productId } = useProduct();
+
+  const [form, setForm] = useState<FinalFormData>({
     title: { "en-US": "", "fr-CA": "" },
     description: { "en-US": "", "fr-CA": "" },
+    productId: productId,
   });
 
   const handleChange = (
@@ -40,13 +46,14 @@ const ContentfulForm: React.FC = () => {
     console.log(form);
 
     // blogPost - this is the id of the component I am allowing edit access to
-    uploadEntryToContentful(form, "title")();
+    uploadEntryToContentful(form, "item")();
 
     // here, submit the call to contentful
 
     setForm({
       title: { "en-US": "", "fr-CA": "" },
       description: { "en-US": "", "fr-CA": "" },
+      productId: productId || "",
     });
   };
 
@@ -169,8 +176,6 @@ const ContentfulForm: React.FC = () => {
             >
               Save Entry
             </button>
-
-            {/* <UploadToContentfulButton form={form} contentId="blogPost" /> */}
           </div>
         </form>
       </div>
