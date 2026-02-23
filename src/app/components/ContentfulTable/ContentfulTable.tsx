@@ -33,7 +33,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
       : "bg-amber-100 text-amber-700";
 
   return (
-    <div className="max-w-[50vw] mx-auto mt-12 -ms-6">
+    <div className="lg:max-w-[50vw] px-8 mx-auto mt-12 lg:-ms-6">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden min-h-[500px]">
         {/* HEADER */}
         <div className="px-8 py-6 border-b border-gray-100">
