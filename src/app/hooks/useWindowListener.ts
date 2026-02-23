@@ -18,7 +18,7 @@ export const useWindowListener = () => {
       console.log("message:", JSON.stringify(event.data, null, 4));
 
       if (data) {
-        if (data.productId) setProductId(data.productId);
+        if (data.payload.productId) setProductId(data.payload.productId);
       }
     });
 
