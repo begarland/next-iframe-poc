@@ -56,11 +56,16 @@ const ContentfulPullContent = async () => {
   const data = JSON.parse(JSON.stringify(rawData));
 
   return (
+    <>
     <div className="flex flex-col justify-center items-center gap-5">
       {data ? <ContentfulTable data={data} /> : null}
       {/* <h1>{data.title}</h1> */}
       {/* <Markdown>{data.description}</Markdown> */}
     </div>
+      <>
+        <p>* Contentful caches data </p>
+      </>
+    </>
   );
 };
 
