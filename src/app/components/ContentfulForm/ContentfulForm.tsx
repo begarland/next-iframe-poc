@@ -2,7 +2,7 @@
 
 import { uploadEntryToContentful } from "@/app/fetches/uploadEntryToContentful";
 import { ChangeEvent, FormEvent, useState } from "react";
-import UploadToContentfulButton from "../UploadToContentfulButton";
+// import UploadToContentfulButton from "../UploadToContentfulButton";
 
 type LocalizedField = {
   "en-US": string;
@@ -40,7 +40,7 @@ const ContentfulForm: React.FC = () => {
     console.log(form);
 
     // blogPost - this is the id of the component I am allowing edit access to
-    uploadEntryToContentful(form, "title");
+    uploadEntryToContentful(form, "title")();
 
     // here, submit the call to contentful
 
@@ -163,14 +163,14 @@ const ContentfulForm: React.FC = () => {
 
           {/* Footer Actions */}
           <div className="pt-6 border-t border-gray-100 flex justify-end">
-            {/* <button
+            <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition active:scale-[0.98]"
+              className="px-6 py-2.5 pointer bg-[#c94f7c] hover:bg-pink-900 text-white! font-bold rounded-3xl transition active:scale-[0.98]"
             >
               Save Entry
-            </button> */}
+            </button>
 
-            <UploadToContentfulButton form={form} />
+            {/* <UploadToContentfulButton form={form} contentId="blogPost" /> */}
           </div>
         </form>
       </div>

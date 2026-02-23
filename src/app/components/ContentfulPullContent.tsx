@@ -19,12 +19,12 @@ const previewClient = contentful.createClient({
 async function getData() {
   let publishedData, previewData;
 
-  const locale = "en-US";
+  // const locale = "en-US";
 
   await publishedClient
     .getEntries({
       content_type: "title",
-      locale: locale,
+      // locale: locale,
     })
     .then(function (entries) {
       publishedData = entries;
