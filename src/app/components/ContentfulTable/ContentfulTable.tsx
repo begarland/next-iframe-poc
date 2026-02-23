@@ -2,29 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import Markdown from "react-markdown";
-
-type Entry = {
-  sys: {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-  fields: {
-    title: string;
-    description: string;
-  };
-};
-
-export type ContentfulDataProps = {
-  data: {
-    publishedData: {
-      items: Entry[];
-    };
-    previewData: {
-      items: Entry[];
-    };
-  };
-};
+import { ContentfulDataProps } from "./types";
 
 const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
   const { publishedData, previewData } = data;
