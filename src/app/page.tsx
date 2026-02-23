@@ -1,4 +1,4 @@
-// import ContentfulPullContent from "./components/ContentfulPullContent";
+import ContentfulPullContent from "./components/ContentfulPullContent";
 import ContentfulPushContent from "./components/ContentfulPushContent";
 
 export default function Home() {
@@ -9,7 +9,7 @@ export default function Home() {
           <ContentfulPushContent />
         </div>
         <div className="w-1/2">
-          {/* <ContentfulPullContent /> */}
+          <ContentfulPullContent />
         </div>
       </div>
     </div>
