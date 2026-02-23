@@ -8,13 +8,11 @@ import { useProduct } from "@/app/contexts/ProductContext";
 const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
   const { productId } = useProduct();
 
-  const { publishedData, previewData } = data;
+  const { previewData } = data;
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const rows = useMemo(() => {
-    const publishedIds = new Set(
-      publishedData.items.map((item) => item.sys.id),
-    );
+    const publishedIds = new Set(previewData.items.map((item) => item.sys.id));
 
     return previewData.items.map((item) => ({
       id: item.sys.id,
@@ -25,7 +23,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
       createdAt: item.sys.createdAt,
       updatedAt: item.sys.updatedAt,
     }));
-  }, [publishedData, previewData]);
+  }, [previewData]);
 
   const selectedItem = rows.find((row) => row.id === selectedId);
 
@@ -45,6 +43,14 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
             {selectedItem ? "Entry Details" : "Content Entries"}
           </h1>
         </div>
+        {selectedItem ? (
+          <button
+            onClick={() => setSelectedId(null)}
+            className="mb-6 text-sm font-medium text-gray-500 hover:text-gray-900 transition"
+          >
+            ← Back to table
+          </button>
+        ) : null}
 
         <div className="p-8">
           {/* =============================

@@ -17,19 +17,9 @@ const previewClient = contentful.createClient({
 });
 
 async function getData() {
-  let publishedData, previewData;
+  let previewData;
 
   // const locale = "en-US";
-
-  await publishedClient
-    .getEntries({
-      content_type: "item",
-      // locale: locale,
-    })
-    .then(function (entries) {
-      publishedData = entries;
-    });
-
   await previewClient
     .getEntries({
       content_type: "item",
@@ -40,7 +30,6 @@ async function getData() {
     });
 
   return {
-    publishedData,
     previewData,
   };
 }
@@ -49,7 +38,7 @@ const ContentfulPullContent = async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawData: any = await getData();
 
-  console.log('in here...')
+  console.log("in here...");
 
   console.log("rawData", rawData);
 
@@ -57,11 +46,11 @@ const ContentfulPullContent = async () => {
 
   return (
     <>
-    <div className="flex flex-col justify-center items-center gap-5">
-      {data ? <ContentfulTable data={data} /> : null}
-      {/* <h1>{data.title}</h1> */}
-      {/* <Markdown>{data.description}</Markdown> */}
-    </div>
+      <div className="flex flex-col justify-center items-center gap-5">
+        {data ? <ContentfulTable data={data} /> : null}
+        {/* <h1>{data.title}</h1> */}
+        {/* <Markdown>{data.description}</Markdown> */}
+      </div>
       <>
         <p>* Contentful caches data </p>
       </>
