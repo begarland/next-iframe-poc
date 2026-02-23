@@ -1,6 +1,8 @@
 "use client";
 
+import { uploadEntryToContentful } from "@/app/fetches/uploadEntryToContentful";
 import { ChangeEvent, FormEvent, useState } from "react";
+import UploadToContentfulButton from "../UploadToContentfulButton";
 
 type LocalizedField = {
   "en-US": string;
@@ -36,6 +38,10 @@ const ContentfulForm: React.FC = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(form);
+
+    uploadEntryToContentful(form);
+
+    // here, submit the call to contentful
 
     setForm({
       title: { "en-US": "", "fr-CA": "" },
@@ -156,12 +162,14 @@ const ContentfulForm: React.FC = () => {
 
           {/* Footer Actions */}
           <div className="pt-6 border-t border-gray-100 flex justify-end">
-            <button
+            {/* <button
               type="submit"
               className="px-6 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition active:scale-[0.98]"
             >
               Save Entry
-            </button>
+            </button> */}
+
+            <UploadToContentfulButton form={form} />
           </div>
         </form>
       </div>

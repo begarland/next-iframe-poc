@@ -109,9 +109,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
                 {selectedItem.title}
               </h2>
 
-                    <Markdown>{selectedItem.description}</Markdown>
-
-          
+              <Markdown>{selectedItem.description}</Markdown>
             </div>
           ) : (
             /* =============================

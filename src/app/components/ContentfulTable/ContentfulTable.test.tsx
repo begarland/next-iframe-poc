@@ -2,6 +2,17 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import ContentfulTable from "./ContentfulTable";
 
+jest.mock("@/app/fetches/uploadEntryToContentful", () => ({
+  uploadEntryToContentful: jest.fn(),
+}));
+
+jest.mock("react-markdown", () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+}));
+
 const mockData = {
   data: {
     publishedData: {

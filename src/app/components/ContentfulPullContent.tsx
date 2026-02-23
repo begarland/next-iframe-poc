@@ -33,7 +33,7 @@ async function getData() {
   await previewClient
     .getEntries({
       content_type: "title",
-      locale: locale,
+      // locale: locale,
     })
     .then(function (entries) {
       previewData = entries;
