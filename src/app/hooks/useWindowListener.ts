@@ -20,6 +20,7 @@ export const useWindowListener = () => {
       console.log("message:", JSON.stringify(event.data, null, 4));
 
       if (data) {
+        console.log('changed payload id', data)
         if (data.payload?.productId) setProductId(data.payload.productId);
       }
     });
