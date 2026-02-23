@@ -9,7 +9,7 @@ type ProductContextType = {
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
-  const [productId, setProductId] = useState<string | null>('4');
+  const [productId, setProductId] = useState<string | null>('2');
 
   return (
     <ProductContext.Provider value={{ productId, setProductId }}>
