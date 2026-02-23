@@ -49,6 +49,8 @@ const ContentfulPullContent = async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawData: any = await getData();
 
+  console.log('in here...')
+
   console.log("rawData", rawData);
 
   const data = JSON.parse(JSON.stringify(rawData));
