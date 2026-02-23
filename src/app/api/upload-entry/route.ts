@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  const payload = await req.json();
+
   const myHeaders = new Headers();
   myHeaders.append(
     "Content-Type",
     "application/vnd.contentful.management.v1+json",
   );
-  myHeaders.append("X-Contentful-Content-Type", "title");
+  myHeaders.append("X-Contentful-Content-Type", payload?.contentId); // this is where the content type id is being selected
   myHeaders.append(
     "Authorization",
     `Bearer ${process.env.CONTENTFUL_MANAGEMENT_API_ACCESS_TOKEN}`,
@@ -16,7 +18,7 @@ export async function POST(req: NextRequest) {
   const requestOptions: any = {
     method: "POST",
     headers: myHeaders,
-    body: JSON.stringify(await req.json()),
+    body: JSON.stringify(payload),
     redirect: "follow",
   };
 
