@@ -56,7 +56,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
 
   return (
     <div className="px-8 py-12">
-      <div className="bg-white shadow-xl rounded-2xl overflow-hidden min-h-[500px]">
+      <div className="bg-white shadow-xl rounded-2xl overflow-hidden min-h-125">
         {/* HEADER */}
         <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-gray-900">
