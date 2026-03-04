@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import Markdown from "react-markdown";
 import { ContentfulDataProps } from "./types";
 import { useProduct } from "@/app/contexts/ProductContext";
 
 const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
   const { productId } = useProduct();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const handleRefresh = () => {
+    startTransition(() => {
+      router.refresh();
+    });
+  };
 
   const { previewData } = data;
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -35,13 +44,44 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
       : "bg-amber-100 text-amber-700";
 
   return (
-    <div className="lg:max-w-[50vw] px-8 mx-auto mt-12 lg:-ms-6">
+    <div className="px-8 py-12">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden min-h-[500px]">
         {/* HEADER */}
-        <div className="px-8 py-6 border-b border-gray-100">
+        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-gray-900">
             {selectedItem ? "Entry Details" : "Content Entries"}
           </h1>
+          <div className="relative group">
+          <button
+            onClick={handleRefresh}
+            disabled={isPending}
+            aria-label={isPending ? "Refreshing data" : "Refresh data"}
+            className="p-2 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`h-5 w-5 ${isPending ? "animate-spin" : ""}`}
+              aria-hidden="true"
+            >
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+              <path d="M21 3v5h-5" />
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+              <path d="M8 16H3v5" />
+            </svg>
+          </button>
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute right-0 top-full mt-2 whitespace-nowrap rounded-md border border-gray-100 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+            >
+              Refresh Content
+            </span>
+          </div>
         </div>
         {selectedItem ? (
           <button
@@ -58,13 +98,6 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
           ============================= */}
           {selectedItem ? (
             <div>
-              <button
-                onClick={() => setSelectedId(null)}
-                className="mb-6 text-sm font-medium text-gray-500 hover:text-gray-900 transition"
-              >
-                ← Back to table
-              </button>
-
               <div className="flex items-center justify-between mb-6">
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(

@@ -61,8 +61,8 @@ const ContentfulForm: React.FC = () => {
     "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none";
 
   return (
-    <div className="min-h-screen py-12 px-4">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div className="py-12 px-8">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
         {/* Header */}
         <div className="px-8 py-6 border-b border-gray-100">
           <h1 className="text-2xl font-semibold text-gray-900">

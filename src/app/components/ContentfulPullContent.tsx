@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 import * as contentful from "contentful";
 import ContentfulTable from "./ContentfulTable/ContentfulTable";
-import RefreshButton from "./RefreshButton";
 import { unstable_noStore as noStore } from "next/cache";
 // import Markdown from "react-markdown";
 
@@ -47,8 +46,7 @@ const ContentfulPullContent = async () => {
   const data = JSON.parse(JSON.stringify(rawData));
 
   return (
-    <div className="flex flex-col justify-center items-center gap-5">
-      <RefreshButton />
+    <div className="flex flex-col gap-5">
       {data ? <ContentfulTable data={data} /> : null}
       <p>* Contentful takes around 5 mins to update.</p>
     </div>
