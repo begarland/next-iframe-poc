@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useMemo, useState, useTransition } from "react";
+import React, { useEffect, useMemo, useState, useTransition } from "react";
+
+const AUTO_REFRESH_INTERVAL_MS = 30_000;
 import { useRouter } from "next/navigation";
 import Markdown from "react-markdown";
 import { ContentfulDataProps } from "./types";
@@ -16,6 +18,15 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
       router.refresh();
     });
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      startTransition(() => {
+        router.refresh();
+      });
+    }, AUTO_REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [router]);
 
   const { previewData } = data;
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -51,6 +62,8 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
           <h1 className="text-2xl font-semibold text-gray-900">
             {selectedItem ? "Entry Details" : "Content Entries"}
           </h1>
+          <div className="flex items-center gap-3">
+          <span className="text-xs text-gray-400">Changes may take up to 5 mins to appear</span>
           <div className="relative group">
           <button
             onClick={handleRefresh}
@@ -81,6 +94,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
             >
               Refresh Content
             </span>
+          </div>
           </div>
         </div>
         {selectedItem ? (

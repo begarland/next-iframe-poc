@@ -8,6 +8,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 type LocalizedField = {
   "en-US": string;
   "fr-CA": string;
+  "es-MX": string;
 };
 
 type FormData = {
@@ -17,20 +18,29 @@ type FormData = {
 
 type FinalFormData = FormData & { productId: LocalizedField };
 
+type Locale = "en-US" | "fr-CA" | "es-MX";
+
+const LOCALES: { id: Locale; label: string; flag: string; titlePlaceholder: string; descriptionPlaceholder: string }[] = [
+  { id: "en-US", label: "English", flag: "🇺🇸", titlePlaceholder: "Enter English title", descriptionPlaceholder: "Enter English description" },
+  { id: "fr-CA", label: "Français", flag: "🇨🇦", titlePlaceholder: "Entrez le titre français", descriptionPlaceholder: "Entrez la description française" },
+  { id: "es-MX", label: "Español", flag: "🇲🇽", titlePlaceholder: "Ingresa el título en español", descriptionPlaceholder: "Ingresa la descripción en español" },
+];
+
 const ContentfulForm: React.FC = () => {
   const { productId } = useProduct();
+  const [activeLocale, setActiveLocale] = useState<Locale>("en-US");
 
   const [form, setForm] = useState<FinalFormData>({
-    title: { "en-US": "", "fr-CA": "" },
-    description: { "en-US": "", "fr-CA": "" },
-    productId: { "en-US": productId as string, "fr-CA": productId as string },
+    title: { "en-US": "", "fr-CA": "", "es-MX": "" },
+    description: { "en-US": "", "fr-CA": "", "es-MX": "" },
+    productId: { "en-US": productId as string, "fr-CA": productId as string, "es-MX": productId as string },
   });
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, dataset } = e.target;
-    const locale = dataset.locale as "en-US" | "fr-CA";
+    const locale = dataset.locale as Locale;
 
     setForm((prev) => ({
       ...prev,
@@ -51,9 +61,9 @@ const ContentfulForm: React.FC = () => {
     // here, submit the call to contentful
 
     setForm({
-      title: { "en-US": "", "fr-CA": "" },
-      description: { "en-US": "", "fr-CA": "" },
-      productId: { "en-US": productId as string, "fr-CA": productId as string },
+      title: { "en-US": "", "fr-CA": "", "es-MX": "" },
+      description: { "en-US": "", "fr-CA": "", "es-MX": "" },
+      productId: { "en-US": productId as string, "fr-CA": productId as string, "es-MX": productId as string },
     });
   };
 
@@ -69,104 +79,71 @@ const ContentfulForm: React.FC = () => {
             Create Content Entry
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Provide localized content for English and French.
+            Provide localized content for English, French, and Spanish.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-10">
-          {/* Titles Section */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">Titles</h2>
+        {/* Language Tabs */}
+        <div className="flex border-b border-gray-100">
+          {LOCALES.map((locale) => (
+            <button
+              key={locale.id}
+              type="button"
+              onClick={() => setActiveLocale(locale.id)}
+              className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
+                activeLocale === locale.id
+                  ? "border-[#c94f7c] text-[#c94f7c]"
+                  : "border-transparent text-gray-500 hover:text-gray-800"
+              }`}
+            >
+              {locale.flag} {locale.label}
+            </button>
+          ))}
+        </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* English */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full">
-                    🇺🇸 English
-                  </span>
-                </div>
-                <input
-                  id="title-en-US"
-                  name="title"
-                  data-locale="en-US"
-                  value={form.title["en-US"]}
-                  onChange={handleChange}
-                  placeholder="Enter English title"
-                  required
-                  className={inputStyles}
-                />
-              </div>
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          {/* Title */}
+          <div>
+            <label
+              htmlFor={`title-${activeLocale}`}
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Title
+            </label>
+            <input
+              key={`title-${activeLocale}`}
+              id={`title-${activeLocale}`}
+              name="title"
+              data-locale={activeLocale}
+              value={form.title[activeLocale]}
+              onChange={handleChange}
+              placeholder={LOCALES.find((l) => l.id === activeLocale)?.titlePlaceholder}
+              required
+              className={inputStyles}
+            />
+          </div>
 
-              {/* French */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full">
-                    🇨🇦 Français
-                  </span>
-                </div>
-                <input
-                  id="title-fr-CA"
-                  name="title"
-                  data-locale="fr-CA"
-                  value={form.title["fr-CA"]}
-                  onChange={handleChange}
-                  placeholder="Entrez le titre français"
-                  required
-                  className={inputStyles}
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Description Section */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">
-              Descriptions
-            </h2>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* English */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full">
-                    🇺🇸 English
-                  </span>
-                </div>
-                <textarea
-                  id="description-en-US"
-                  name="description"
-                  data-locale="en-US"
-                  value={form.description["en-US"]}
-                  onChange={handleChange}
-                  rows={4}
-                  placeholder="Enter English description"
-                  required
-                  className={inputStyles}
-                />
-              </div>
-
-              {/* French */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full">
-                    🇨🇦 Français
-                  </span>
-                </div>
-                <textarea
-                  id="description-fr-CA"
-                  name="description"
-                  data-locale="fr-CA"
-                  value={form.description["fr-CA"]}
-                  onChange={handleChange}
-                  rows={4}
-                  placeholder="Entrez la description française"
-                  required
-                  className={inputStyles}
-                />
-              </div>
-            </div>
-          </section>
+          {/* Description */}
+          <div>
+            <label
+              htmlFor={`description-${activeLocale}`}
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Description
+            </label>
+            <textarea
+              key={`description-${activeLocale}`}
+              id={`description-${activeLocale}`}
+              name="description"
+              data-locale={activeLocale}
+              value={form.description[activeLocale]}
+              onChange={handleChange}
+              rows={4}
+              placeholder={LOCALES.find((l) => l.id === activeLocale)?.descriptionPlaceholder}
+              required
+              className={inputStyles}
+            />
+          </div>
 
           {/* Footer Actions */}
           <div className="pt-6 border-t border-gray-100 flex justify-end">

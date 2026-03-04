@@ -48,7 +48,6 @@ const ContentfulPullContent = async () => {
   return (
     <div className="flex flex-col gap-5">
       {data ? <ContentfulTable data={data} /> : null}
-      <p>* Contentful takes around 5 mins to update.</p>
     </div>
   );
 };
