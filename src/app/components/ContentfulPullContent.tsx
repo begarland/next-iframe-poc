@@ -5,10 +5,10 @@ import ContentfulTable from "./ContentfulTable/ContentfulTable";
 
 dotenv.config();
 
-const publishedClient = contentful.createClient({
-  space: `${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
-  accessToken: `${process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN}`,
-});
+// const publishedClient = contentful.createClient({
+//   space: `${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
+//   accessToken: `${process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN}`,
+// });
 
 const previewClient = contentful.createClient({
   space: `${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
@@ -23,6 +23,7 @@ async function getData() {
   await previewClient
     .getEntries({
       content_type: "item",
+
       // locale: locale,
     })
     .then(function (entries) {
@@ -52,7 +53,7 @@ const ContentfulPullContent = async () => {
         {/* <Markdown>{data.description}</Markdown> */}
       </div>
       <>
-        <p>* Contentful caches data </p>
+        <p>* Contentful takes around 5 mins to update. </p>
       </>
     </>
   );
