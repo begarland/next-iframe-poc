@@ -1,7 +1,10 @@
 import * as dotenv from "dotenv";
 import * as contentful from "contentful";
 import ContentfulTable from "./ContentfulTable/ContentfulTable";
+import RefreshButton from "./RefreshButton";
+import { unstable_noStore as noStore } from "next/cache";
 // import Markdown from "react-markdown";
+
 
 dotenv.config();
 
@@ -10,13 +13,18 @@ dotenv.config();
 //   accessToken: `${process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN}`,
 // });
 
+// previwe client has both, published is only published
 const previewClient = contentful.createClient({
   space: `${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
   accessToken: `${process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN}`,
   host: "preview.contentful.com",
 });
 
+export const dynamic = 'force-dynamic'
+
+
 async function getData() {
+  noStore();
   let previewData;
 
   // const locale = "en-US";
@@ -34,29 +42,16 @@ async function getData() {
     previewData,
   };
 }
-
 const ContentfulPullContent = async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rawData: any = await getData();
-
-  console.log("in here...");
-
-  console.log("rawData", rawData);
-
+  const rawData = await getData();
   const data = JSON.parse(JSON.stringify(rawData));
 
   return (
-    <>
-      <div className="flex flex-col justify-center items-center gap-5">
-        {data ? <ContentfulTable data={data} /> : null}
-        {/* <h1>{data.title}</h1> */}
-        {/* <Markdown>{data.description}</Markdown> */}
-      </div>
-      <>
-        <p>* Contentful takes around 5 mins to update. </p>
-      </>
-    </>
+    <div className="flex flex-col justify-center items-center gap-5">
+      <RefreshButton />
+      {data ? <ContentfulTable data={data} /> : null}
+      <p>* Contentful takes around 5 mins to update.</p>
+    </div>
   );
 };
-
 export default ContentfulPullContent;
