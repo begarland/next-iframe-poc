@@ -15,7 +15,6 @@ type FormData = {
   description: LocalizedField;
 };
 
-type FinalFormData = FormData & { productId: LocalizedField };
 
 type Locale = "en-US" | "fr-CA";
 
@@ -52,10 +51,9 @@ const ContentfulForm: React.FC = () => {
   const { productId } = useProduct();
   const [activeLocale, setActiveLocale] = useState<Locale>("en-US");
 
-  const [form, setForm] = useState<FinalFormData>({
+  const [form, setForm] = useState<FormData>({
     title: { "en-US": "", "fr-CA": "" },
     description: { "en-US": "", "fr-CA": "" },
-    productId: { "en-US": productId as string, "fr-CA": productId as string },
   });
 
   const [imageFiles, setImageFiles] = useState<Record<Locale, File | null>>({
@@ -127,6 +125,7 @@ const ContentfulForm: React.FC = () => {
 
     const payload = {
       ...form,
+      productId: { "en-US": productId as string, "fr-CA": productId as string },
       ...(Object.keys(imagesField).length > 0 ? { images: imagesField } : {}),
     };
 
@@ -141,7 +140,6 @@ const ContentfulForm: React.FC = () => {
     setForm({
       title: { "en-US": "", "fr-CA": "" },
       description: { "en-US": "", "fr-CA": "" },
-      productId: { "en-US": productId as string, "fr-CA": productId as string },
     });
     setImageFiles({ "en-US": null, "fr-CA": null });
     setImagePreviews({ "en-US": null, "fr-CA": null });
