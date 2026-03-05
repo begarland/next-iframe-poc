@@ -11,6 +11,8 @@
 const { Builder, By, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const BASE_URL = process.env.TEST_BASE_URL || "http://localhost:3000";
 const TIMEOUT = 10_000;
@@ -409,6 +411,146 @@ describe("next-iframe-poc E2E", function () {
       const btn = await waitFor(driver, By.css("button[aria-label='Refresh data']"), 3_000);
       const isDisabled = await btn.getAttribute("disabled");
       assert.equal(isDisabled, null, "Refresh button should be re-enabled after cooldown");
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Image Upload
+  // Reads fixture images from tests/selenium/fixtures/.
+  // Locale is inferred from each filename:
+  //   en-US  →  contains "en-us", "en_us", "english", or "american"
+  //   fr-CA  →  contains "fr-ca", "fr_ca", "french", "francais", or "français"
+  // Example filenames: cat-en-US.jpg  /  cat-fr-CA.jpg
+  // -------------------------------------------------------------------------
+
+  describe("Image Upload", () => {
+    const FIXTURES_DIR = path.join(__dirname, "fixtures");
+
+    function localeFromFilename(filename) {
+      const n = filename.toLowerCase().replace(/[_\-.]/g, " ");
+      if (/\ben.?us\b/.test(n) || /\benglish\b/.test(n) || /\bamerican\b/.test(n)) return "en-US";
+      if (/\bfr.?ca\b/.test(n) || /\bfrench\b/.test(n) || /\bfranc/.test(n)) return "fr-CA";
+      return null;
+    }
+
+    function loadFixtures() {
+      if (!fs.existsSync(FIXTURES_DIR)) return {};
+      const byLocale = {};
+      for (const file of fs.readdirSync(FIXTURES_DIR)) {
+        if (!/\.(jpe?g|png|gif|webp)$/i.test(file)) continue;
+        const locale = localeFromFilename(file);
+        if (locale && !byLocale[locale]) {
+          byLocale[locale] = path.resolve(FIXTURES_DIR, file);
+        }
+      }
+      return byLocale;
+    }
+
+    it("parses fixture filenames and maps them to the correct locale", () => {
+      assert.equal(localeFromFilename("cat-en-US.jpg"), "en-US");
+      assert.equal(localeFromFilename("cat-fr-CA.jpg"), "fr-CA");
+      assert.equal(localeFromFilename("american_cat.png"), "en-US");
+      assert.equal(localeFromFilename("french-cat.jpeg"), "fr-CA");
+      assert.equal(localeFromFilename("unrelated.jpg"), null);
+    });
+
+    it("uploads per-locale images and resets the form on submit", async function () {
+      this.timeout(120_000); // image upload + Contentful processing takes time
+
+      const byLocale = loadFixtures();
+      if (Object.keys(byLocale).length === 0) {
+        console.log("  ⚠ No fixture images found in tests/selenium/fixtures/ — skipping");
+        return;
+      }
+
+      // --- English tab ---
+      const enTab = await waitFor(
+        driver,
+        By.xpath("//button[contains(.,'English') and contains(@class,'border-b-2')]")
+      );
+      await enTab.click();
+
+      const enTitle = await waitVisible(driver, By.css("input[placeholder='Enter English title']"));
+      await enTitle.clear();
+      await enTitle.sendKeys("Image Upload Test");
+
+      const enDesc = await waitVisible(
+        driver,
+        By.css("textarea[placeholder='Enter English description']")
+      );
+      await enDesc.clear();
+      await enDesc.sendKeys("Selenium image upload test");
+
+      if (byLocale["en-US"]) {
+        const fileInput = await waitFor(driver, By.css("input[type='file'][accept='image/*']"));
+        await fileInput.sendKeys(byLocale["en-US"]);
+        await waitVisible(driver, By.css("img[alt='Preview']"));
+
+        const altInput = await waitVisible(
+          driver,
+          By.css("input[placeholder='Describe the image']")
+        );
+        await altInput.sendKeys("American cat in patriotic costume");
+      }
+
+      // --- Français tab ---
+      const frTab = await waitFor(
+        driver,
+        By.xpath("//button[contains(.,'Français') and contains(@class,'border-b-2')]")
+      );
+      await frTab.click();
+
+      const frTitle = await waitVisible(
+        driver,
+        By.css("input[placeholder='Entrez le titre français']")
+      );
+      await frTitle.clear();
+      await frTitle.sendKeys("Test de téléchargement d'image");
+
+      const frDesc = await waitVisible(
+        driver,
+        By.css("textarea[placeholder='Entrez la description française']")
+      );
+      await frDesc.clear();
+      await frDesc.sendKeys("Test Selenium de téléchargement d'image");
+
+      if (byLocale["fr-CA"]) {
+        const fileInput = await waitFor(driver, By.css("input[type='file'][accept='image/*']"));
+        await fileInput.sendKeys(byLocale["fr-CA"]);
+        await waitVisible(driver, By.css("img[alt='Preview']"));
+
+        const altInput = await waitVisible(
+          driver,
+          By.css("input[placeholder=\"Décrivez l'image\"]")
+        );
+        await altInput.sendKeys("Chat français en costume");
+      }
+
+      // Submit
+      const saveBtn = await waitFor(
+        driver,
+        By.xpath("//button[contains(text(),'Save Entry')]")
+      );
+      await saveBtn.click();
+
+      // Wait for the upload + Contentful processing to finish and the form to reset.
+      // Poll the English title until it clears (up to 90s for asset upload + processing).
+      await driver.wait(async () => {
+        try {
+          await enTab.click();
+          const input = await driver.findElement(
+            By.css("input[placeholder='Enter English title']")
+          );
+          return (await input.getAttribute("value")) === "";
+        } catch {
+          return false;
+        }
+      }, 90_000, "Form did not reset after image upload submit");
+
+      const titleAfter = await driver.findElement(
+        By.css("input[placeholder='Enter English title']")
+      );
+      assert.equal(await titleAfter.getAttribute("value"), "", "English title should be empty after image upload submit");
     });
   });
 });

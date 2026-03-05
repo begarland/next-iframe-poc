@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 
 const AUTO_REFRESH_INTERVAL_MS = 30_000;
 const REFRESH_COOLDOWN_MS = 5_000;
@@ -21,6 +22,8 @@ type LocalizedEntry = {
   fields: {
     title: Record<Locale, string>;
     description: Record<Locale, string>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    images?: Record<string, any>;
   };
 };
 
@@ -76,6 +79,16 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
   const [entryDetail, setEntryDetail] = useState<LocalizedEntry | null>(null);
   const [isFetchingDetail, setIsFetchingDetail] = useState(false);
   const [activeLocale, setActiveLocale] = useState<Locale>("en-US");
+  const [modalImage, setModalImage] = useState<{ url: string; alt: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!modalImage) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setModalImage(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [modalImage]);
 
   const handleRowClick = async (id: string) => {
     setSelectedId(id);
@@ -90,12 +103,14 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
 
   const rows = useMemo(() => {
     const publishedIds = new Set(previewData.items.map((item) => item.sys.id));
+    const str = (v: string | Record<string, string>) =>
+      typeof v === "object" ? (v["en-US"] ?? "") : v;
 
     return previewData.items.map((item) => ({
       id: item.sys.id,
-      title: item.fields.title,
-      description: item.fields.description,
-      productId: item.fields.productId,
+      title: str(item.fields.title),
+      description: str(item.fields.description),
+      productId: str(item.fields.productId),
       status: publishedIds.has(item.sys.id) ? "Published" : "Draft",
       createdAt: item.sys.createdAt,
       updatedAt: item.sys.updatedAt,
@@ -112,6 +127,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
       : "bg-amber-100 text-amber-700";
 
   return (
+    <>
     <div className="px-8 py-12">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden min-h-125">
         {/* HEADER */}
@@ -225,6 +241,34 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
                     )}
                   </h2>
                   <Markdown>{entryDetail.fields.description[activeLocale] ?? ""}</Markdown>
+
+                  {(() => {
+                    // withAllLocales means the Asset's own fields are also locale-keyed objects
+                    const img = entryDetail.fields.images?.[activeLocale]
+                      ?? entryDetail.fields.images?.["en-US"];
+                    const imageUrl: string | undefined =
+                      img?.fields?.file?.[activeLocale]?.url ??
+                      img?.fields?.file?.["en-US"]?.url;
+                    const imageAlt: string =
+                      img?.fields?.title?.[activeLocale] ??
+                      img?.fields?.title?.["en-US"] ??
+                      "Entry image";
+                    return imageUrl ? (
+                      <button
+                        type="button"
+                        onClick={() => setModalImage({ url: `https:${imageUrl}`, alt: imageAlt })}
+                        className="block mt-6 rounded-xl overflow-hidden border border-gray-100 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c94f7c]"
+                        aria-label="View full-size image"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`https:${imageUrl}`}
+                          alt={imageAlt}
+                          className="max-w-75 max-h-100 object-contain"
+                        />
+                      </button>
+                    ) : null;
+                  })()}
                 </div>
               ) : null}
             </div>
@@ -276,6 +320,35 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
         </div>
       </div>
     </div>
+
+    {mounted && modalImage && createPortal(
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+        onClick={() => setModalImage(null)}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Full-size image"
+      >
+        <div className="relative" onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={() => setModalImage(null)}
+            aria-label="Close image"
+            className="absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-sm text-gray-700 shadow hover:bg-white transition"
+          >
+            ✕
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={modalImage.url}
+            alt={modalImage.alt}
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl"
+          />
+        </div>
+      </div>,
+      document.body
+    )}
+    </>
   );
 };
 

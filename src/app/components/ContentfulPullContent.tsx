@@ -4,7 +4,6 @@ import ContentfulTable from "./ContentfulTable/ContentfulTable";
 import { unstable_noStore as noStore } from "next/cache";
 // import Markdown from "react-markdown";
 
-
 dotenv.config();
 
 // const publishedClient = contentful.createClient({
@@ -19,19 +18,15 @@ const previewClient = contentful.createClient({
   host: "preview.contentful.com",
 });
 
-export const dynamic = 'force-dynamic'
-
+export const dynamic = "force-dynamic";
 
 async function getData() {
   noStore();
   let previewData;
 
-  // const locale = "en-US";
-  await previewClient
+  await previewClient.withAllLocales
     .getEntries({
       content_type: "item",
-
-      // locale: locale,
     })
     .then(function (entries) {
       previewData = entries;

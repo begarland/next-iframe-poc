@@ -1,3 +1,5 @@
+type LocalizedString = Record<string, string>;
+
 type Entry = {
   sys: {
     id: string;
@@ -5,9 +7,9 @@ type Entry = {
     updatedAt: string;
   };
   fields: {
-    title: string;
-    description: string;
-    productId: string;
+    title: string | LocalizedString;
+    description: string | LocalizedString;
+    productId: string | LocalizedString;
   };
 };
 
