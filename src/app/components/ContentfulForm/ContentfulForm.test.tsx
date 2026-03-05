@@ -130,6 +130,7 @@ describe("ContentfulForm", () => {
       );
       await user.click(screen.getByRole("button", { name: /save entry/i }));
 
+      await user.click(screen.getByRole("button", { name: /français/i }));
       expect(screen.getByPlaceholderText("Entrez le titre français")).toHaveValue("");
     });
   });

@@ -13,11 +13,13 @@ export async function POST(req: NextRequest) {
 
     // Collect per-locale files and alt text
     const files: Partial<Record<Locale, File>> = {};
+    const titles: Partial<Record<Locale, string>> = {};
     const alts: Partial<Record<Locale, string>> = {};
     for (const locale of LOCALES) {
       const file = formData.get(`file-${locale}`) as File | null;
       if (file) {
         files[locale] = file;
+        titles[locale] = (formData.get(`titleText-${locale}`) as string | null) || file.name;
         alts[locale] = (formData.get(`altText-${locale}`) as string | null) || file.name;
       }
     }
@@ -53,9 +55,11 @@ export async function POST(req: NextRequest) {
 
     // Step 2 — create ONE asset with locale-specific title + file fields
     const titleField: Partial<Record<Locale, string>> = {};
+    const descField: Partial<Record<Locale, string>> = {};
     const fileField: Partial<Record<Locale, object>> = {};
     for (const locale of localesWithFiles) {
-      titleField[locale] = alts[locale];
+      titleField[locale] = titles[locale];
+      descField[locale] = alts[locale];
       fileField[locale] = {
         contentType: files[locale]!.type,
         fileName: files[locale]!.name,
@@ -72,7 +76,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/vnd.contentful.management.v1+json",
       },
       body: JSON.stringify({
-        fields: { title: titleField, file: fileField },
+        fields: { title: titleField, description: descField, file: fileField },
       }),
     });
     if (!createRes.ok) {

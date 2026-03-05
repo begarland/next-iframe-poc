@@ -486,6 +486,12 @@ describe("next-iframe-poc E2E", function () {
         await fileInput.sendKeys(byLocale["en-US"]);
         await waitVisible(driver, By.css("img[alt='Preview']"));
 
+        const imageTitleInput = await waitVisible(
+          driver,
+          By.css("input[placeholder='Enter image title']")
+        );
+        await imageTitleInput.sendKeys("American Cat");
+
         const altInput = await waitVisible(
           driver,
           By.css("input[placeholder='Describe the image']")
@@ -518,6 +524,12 @@ describe("next-iframe-poc E2E", function () {
         const fileInput = await waitFor(driver, By.css("input[type='file'][accept='image/*']"));
         await fileInput.sendKeys(byLocale["fr-CA"]);
         await waitVisible(driver, By.css("img[alt='Preview']"));
+
+        const imageTitleInput = await waitVisible(
+          driver,
+          By.css("input[placeholder=\"Entrez le titre de l'image\"]")
+        );
+        await imageTitleInput.sendKeys("Chat Français");
 
         const altInput = await waitVisible(
           driver,

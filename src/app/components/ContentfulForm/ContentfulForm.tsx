@@ -25,6 +25,7 @@ const LOCALES: {
   flag: string;
   titlePlaceholder: string;
   descriptionPlaceholder: string;
+  imageTitlePlaceholder: string;
   altPlaceholder: string;
 }[] = [
   {
@@ -33,6 +34,7 @@ const LOCALES: {
     flag: "🇺🇸",
     titlePlaceholder: "Enter English title",
     descriptionPlaceholder: "Enter English description",
+    imageTitlePlaceholder: "Enter image title",
     altPlaceholder: "Describe the image",
   },
   {
@@ -41,6 +43,7 @@ const LOCALES: {
     flag: "🇨🇦",
     titlePlaceholder: "Entrez le titre français",
     descriptionPlaceholder: "Entrez la description française",
+    imageTitlePlaceholder: "Entrez le titre de l'image",
     altPlaceholder: "Décrivez l'image",
   },
 ];
@@ -64,6 +67,10 @@ const ContentfulForm: React.FC = () => {
     "fr-CA": null,
   });
   const [imageAlts, setImageAlts] = useState<Record<Locale, string>>({
+    "en-US": "",
+    "fr-CA": "",
+  });
+  const [imageTitles, setImageTitles] = useState<Record<Locale, string>>({
     "en-US": "",
     "fr-CA": "",
   });
@@ -97,6 +104,7 @@ const ContentfulForm: React.FC = () => {
         for (const locale of localesWithImages) {
           const file = imageFiles[locale]!;
           fd.append(`file-${locale}`, file);
+          fd.append(`titleText-${locale}`, imageTitles[locale] || file.name);
           fd.append(`altText-${locale}`, imageAlts[locale] || file.name);
         }
         const res = await fetch("/api/upload-asset", { method: "POST", body: fd });
@@ -138,6 +146,7 @@ const ContentfulForm: React.FC = () => {
     setImageFiles({ "en-US": null, "fr-CA": null });
     setImagePreviews({ "en-US": null, "fr-CA": null });
     setImageAlts({ "en-US": "", "fr-CA": "" });
+    setImageTitles({ "en-US": "", "fr-CA": "" });
     setActiveLocale("en-US");
   };
 
@@ -274,26 +283,46 @@ const ContentfulForm: React.FC = () => {
             )}
           </div>
 
-          {/* Alt text — shown when an image is selected for this locale */}
+          {/* Image title + alt text — shown when an image is selected for this locale */}
           {imageFiles[activeLocale] && (
-            <div>
-              <label
-                htmlFor={`imageAlt-${activeLocale}`}
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Alt text
-              </label>
-              <input
-                key={`imageAlt-${activeLocale}`}
-                id={`imageAlt-${activeLocale}`}
-                value={imageAlts[activeLocale]}
-                onChange={(e) =>
-                  setImageAlts((s) => ({ ...s, [activeLocale]: e.target.value }))
-                }
-                placeholder={activeLocaleConfig.altPlaceholder}
-                className={inputStyles}
-              />
-            </div>
+            <>
+              <div>
+                <label
+                  htmlFor={`imageTitle-${activeLocale}`}
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Image title
+                </label>
+                <input
+                  key={`imageTitle-${activeLocale}`}
+                  id={`imageTitle-${activeLocale}`}
+                  value={imageTitles[activeLocale]}
+                  onChange={(e) =>
+                    setImageTitles((s) => ({ ...s, [activeLocale]: e.target.value }))
+                  }
+                  placeholder={activeLocaleConfig.imageTitlePlaceholder}
+                  className={inputStyles}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor={`imageAlt-${activeLocale}`}
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Alt text
+                </label>
+                <input
+                  key={`imageAlt-${activeLocale}`}
+                  id={`imageAlt-${activeLocale}`}
+                  value={imageAlts[activeLocale]}
+                  onChange={(e) =>
+                    setImageAlts((s) => ({ ...s, [activeLocale]: e.target.value }))
+                  }
+                  placeholder={activeLocaleConfig.altPlaceholder}
+                  className={inputStyles}
+                />
+              </div>
+            </>
           )}
 
           {isUploading && (
