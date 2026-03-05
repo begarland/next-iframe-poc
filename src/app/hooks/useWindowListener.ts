@@ -19,7 +19,7 @@ export const useWindowListener = () => {
 
       if (data) {
         console.log("changed payload id", data);
-        if (data.payload?.productId) setProductId(data.payload.productId);
+        if (data.payload?.productId) setProductId(String(data.payload.productId));
       }
     });
 

@@ -125,7 +125,7 @@ const ContentfulForm: React.FC = () => {
 
     const payload = {
       ...form,
-      productId: { "en-US": productId as string, "fr-CA": productId as string },
+      productId: { "en-US": String(productId), "fr-CA": String(productId) },
       ...(Object.keys(imagesField).length > 0 ? { images: imagesField } : {}),
     };
 
