@@ -9,12 +9,11 @@ import Markdown from "react-markdown";
 import { ContentfulDataProps } from "./types";
 import { useProduct } from "@/app/contexts/ProductContext";
 
-type Locale = "en-US" | "fr-CA" | "es-MX";
+type Locale = "en-US" | "fr-CA" ;
 
 const LOCALES: { id: Locale; label: string; flag: string }[] = [
   { id: "en-US", label: "English", flag: "🇺🇸" },
   { id: "fr-CA", label: "Français", flag: "🇨🇦" },
-  { id: "es-MX", label: "Español", flag: "🇲🇽" },
 ];
 
 type LocalizedEntry = {

@@ -8,7 +8,6 @@ import { ChangeEvent, FormEvent, useState } from "react";
 type LocalizedField = {
   "en-US": string;
   "fr-CA": string;
-  "es-MX": string;
 };
 
 type FormData = {
@@ -18,12 +17,11 @@ type FormData = {
 
 type FinalFormData = FormData & { productId: LocalizedField };
 
-type Locale = "en-US" | "fr-CA" | "es-MX";
+type Locale = "en-US" | "fr-CA" ;
 
 const LOCALES: { id: Locale; label: string; flag: string; titlePlaceholder: string; descriptionPlaceholder: string }[] = [
   { id: "en-US", label: "English", flag: "🇺🇸", titlePlaceholder: "Enter English title", descriptionPlaceholder: "Enter English description" },
   { id: "fr-CA", label: "Français", flag: "🇨🇦", titlePlaceholder: "Entrez le titre français", descriptionPlaceholder: "Entrez la description française" },
-  { id: "es-MX", label: "Español", flag: "🇲🇽", titlePlaceholder: "Ingresa el título en español", descriptionPlaceholder: "Ingresa la descripción en español" },
 ];
 
 const ContentfulForm: React.FC = () => {
@@ -31,9 +29,9 @@ const ContentfulForm: React.FC = () => {
   const [activeLocale, setActiveLocale] = useState<Locale>("en-US");
 
   const [form, setForm] = useState<FinalFormData>({
-    title: { "en-US": "", "fr-CA": "", "es-MX": "" },
-    description: { "en-US": "", "fr-CA": "", "es-MX": "" },
-    productId: { "en-US": productId as string, "fr-CA": productId as string, "es-MX": productId as string },
+    title: { "en-US": "", "fr-CA": "" },
+    description: { "en-US": "", "fr-CA": "" },
+    productId: { "en-US": productId as string, "fr-CA": productId as string, },
   });
 
   const handleChange = (
@@ -61,9 +59,9 @@ const ContentfulForm: React.FC = () => {
     // here, submit the call to contentful
 
     setForm({
-      title: { "en-US": "", "fr-CA": "", "es-MX": "" },
-      description: { "en-US": "", "fr-CA": "", "es-MX": "" },
-      productId: { "en-US": productId as string, "fr-CA": productId as string, "es-MX": productId as string },
+      title: { "en-US": "", "fr-CA": "" },
+      description: { "en-US": "", "fr-CA": "" },
+      productId: { "en-US": productId as string, "fr-CA": productId as string,  },
     });
   };
 
@@ -79,7 +77,7 @@ const ContentfulForm: React.FC = () => {
             Create Content Entry
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Provide localized content for English, French, and Spanish.
+            Provide localized content for English and French.
           </p>
         </div>
 

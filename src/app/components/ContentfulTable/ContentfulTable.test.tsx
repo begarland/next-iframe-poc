@@ -48,12 +48,10 @@ const mockEntryDetail = {
     title: {
       "en-US": "English Title",
       "fr-CA": "Titre Français",
-      "es-MX": "Título Español",
     },
     description: {
       "en-US": "English Desc",
       "fr-CA": "Desc Française",
-      "es-MX": "Desc Español",
     },
   },
 };
@@ -171,7 +169,6 @@ describe("ContentfulTable", () => {
       await screen.findByText("English Title");
       expect(screen.getByRole("button", { name: /english/i })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /français/i })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /español/i })).toBeInTheDocument();
     });
 
     it("switches locale content when a tab is clicked", async () => {
@@ -181,15 +178,6 @@ describe("ContentfulTable", () => {
       await screen.findByText("English Title");
       await user.click(screen.getByRole("button", { name: /français/i }));
       expect(screen.getByText("Titre Français")).toBeInTheDocument();
-    });
-
-    it("shows the Spanish locale content when Español tab is clicked", async () => {
-      const user = userEvent.setup();
-      render(<ContentfulTable {...mockData} />);
-      await user.click(screen.getByText("Test Entry"));
-      await screen.findByText("English Title");
-      await user.click(screen.getByRole("button", { name: /español/i }));
-      expect(screen.getByText("Título Español")).toBeInTheDocument();
     });
 
     it("shows the status badge and Back button in the detail header", async () => {

@@ -23,7 +23,6 @@ describe("ContentfulForm", () => {
       render(<ContentfulForm />);
       expect(screen.getByRole("button", { name: /english/i })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /français/i })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /español/i })).toBeInTheDocument();
     });
 
     it("renders the Save Entry button", () => {
@@ -63,18 +62,6 @@ describe("ContentfulForm", () => {
       ).toBeInTheDocument();
     });
 
-    it("shows Spanish placeholders when Español tab is clicked", async () => {
-      const user = userEvent.setup();
-      render(<ContentfulForm />);
-      await user.click(screen.getByRole("button", { name: /español/i }));
-      expect(
-        screen.getByPlaceholderText("Ingresa el título en español")
-      ).toBeInTheDocument();
-      expect(
-        screen.getByPlaceholderText("Ingresa la descripción en español")
-      ).toBeInTheDocument();
-    });
-
     it("preserves English field value when switching to another tab and back", async () => {
       const user = userEvent.setup();
       render(<ContentfulForm />);
@@ -92,27 +79,9 @@ describe("ContentfulForm", () => {
 
       await user.click(screen.getByRole("button", { name: /français/i }));
       await user.type(screen.getByPlaceholderText("Entrez le titre français"), "Bonjour");
-      await user.click(screen.getByRole("button", { name: /español/i }));
       await user.click(screen.getByRole("button", { name: /français/i }));
 
       expect(screen.getByPlaceholderText("Entrez le titre français")).toHaveValue("Bonjour");
-    });
-
-    it("preserves Spanish field value when switching away and back", async () => {
-      const user = userEvent.setup();
-      render(<ContentfulForm />);
-
-      await user.click(screen.getByRole("button", { name: /español/i }));
-      await user.type(
-        screen.getByPlaceholderText("Ingresa el título en español"),
-        "Hola"
-      );
-      await user.click(screen.getByRole("button", { name: /english/i }));
-      await user.click(screen.getByRole("button", { name: /español/i }));
-
-      expect(
-        screen.getByPlaceholderText("Ingresa el título en español")
-      ).toHaveValue("Hola");
     });
   });
 
@@ -162,26 +131,6 @@ describe("ContentfulForm", () => {
       await user.click(screen.getByRole("button", { name: /save entry/i }));
 
       expect(screen.getByPlaceholderText("Entrez le titre français")).toHaveValue("");
-    });
-
-    it("resets Spanish fields after submit", async () => {
-      const user = userEvent.setup();
-      render(<ContentfulForm />);
-
-      await user.click(screen.getByRole("button", { name: /español/i }));
-      await user.type(
-        screen.getByPlaceholderText("Ingresa el título en español"),
-        "Hola"
-      );
-      await user.type(
-        screen.getByPlaceholderText("Ingresa la descripción en español"),
-        "Una descripción"
-      );
-      await user.click(screen.getByRole("button", { name: /save entry/i }));
-
-      expect(
-        screen.getByPlaceholderText("Ingresa el título en español")
-      ).toHaveValue("");
     });
   });
 });
