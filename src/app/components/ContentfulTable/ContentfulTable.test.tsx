@@ -36,10 +36,26 @@ const ENTRY_OTHER_PRODUCT = {
   fields: { title: "Other Product Entry", description: "Wrong product", productId: "99" },
 };
 
+const DRAFT_ENTRY = {
+  sys: {
+    id: "entry-3",
+    createdAt: "2026-03-01T10:00:00.000Z",
+    updatedAt: "2026-03-01T10:00:00.000Z",
+  },
+  fields: { title: "Draft Entry", description: "Not yet published", productId: "4" },
+};
+
 const mockData = {
   data: {
-    publishedData: { items: [] },
+    publishedData: { items: [ENTRY] },
     previewData: { items: [ENTRY, ENTRY_OTHER_PRODUCT] },
+  },
+};
+
+const mockDataWithDraft = {
+  data: {
+    publishedData: { items: [ENTRY] },
+    previewData: { items: [ENTRY, DRAFT_ENTRY] },
   },
 };
 
@@ -105,9 +121,25 @@ describe("ContentfulTable", () => {
       expect(screen.queryByText("Other Product Entry")).not.toBeInTheDocument();
     });
 
-    it("shows a Published status badge for entries", () => {
+    it("shows a Published badge for entries present in publishedData", () => {
       render(<ContentfulTable {...mockData} />);
       expect(screen.getByText("Published")).toBeInTheDocument();
+    });
+
+    it("shows a Draft badge for entries absent from publishedData", () => {
+      render(<ContentfulTable {...mockDataWithDraft} />);
+      expect(screen.getByText("Draft")).toBeInTheDocument();
+    });
+
+    it("does not show Draft for a published entry", () => {
+      render(<ContentfulTable {...mockData} />);
+      expect(screen.queryByText("Draft")).not.toBeInTheDocument();
+    });
+
+    it("shows both Published and Draft badges when data contains both", () => {
+      render(<ContentfulTable {...mockDataWithDraft} />);
+      expect(screen.getByText("Published")).toBeInTheDocument();
+      expect(screen.getByText("Draft")).toBeInTheDocument();
     });
 
     it("renders formatted date strings", () => {

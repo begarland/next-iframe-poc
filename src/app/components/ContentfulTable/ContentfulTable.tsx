@@ -74,7 +74,6 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
     return () => clearInterval(interval);
   }, [router]);
 
-  const { previewData } = data;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [entryDetail, setEntryDetail] = useState<LocalizedEntry | null>(null);
   const [isFetchingDetail, setIsFetchingDetail] = useState(false);
@@ -102,11 +101,11 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
   };
 
   const rows = useMemo(() => {
-    const publishedIds = new Set(previewData.items.map((item) => item.sys.id));
+    const publishedIds = new Set(data.publishedData.items.map((item) => item.sys.id));
     const str = (v: string | Record<string, string>) =>
       typeof v === "object" ? (v["en-US"] ?? "") : v;
 
-    return previewData.items.map((item) => ({
+    return data.previewData.items.map((item) => ({
       id: item.sys.id,
       title: str(item.fields.title),
       description: str(item.fields.description),
@@ -115,7 +114,7 @@ const ContentfulTable: React.FC<ContentfulDataProps> = ({ data }) => {
       createdAt: item.sys.createdAt,
       updatedAt: item.sys.updatedAt,
     }));
-  }, [previewData]);
+  }, [data]);
 
   const selectedRow = rows.find((row) => row.id === selectedId);
 
