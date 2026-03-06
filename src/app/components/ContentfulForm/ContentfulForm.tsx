@@ -129,8 +129,13 @@ const ContentfulForm: React.FC = () => {
       ...(Object.keys(imagesField).length > 0 ? { images: imagesField } : {}),
     };
 
-    console.log(payload);
-    uploadEntryToContentful(payload, "item")();
+    try {
+      await uploadEntryToContentful(payload, "item");
+    } catch (err) {
+      console.error("Failed to save entry", err);
+      setIsUploading(false);
+      return;
+    }
 
     for (const locale of ["en-US", "fr-CA"] as Locale[]) {
       const preview = imagePreviews[locale];
